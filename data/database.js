@@ -6,7 +6,7 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'basic-blog-app-nodejs-express-ejs-mysql',
+  database: 'basic_blog_app_nodejs_express_ejs_mysql',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
