@@ -9,9 +9,11 @@ router.get('/', (req, res) => {
 });
 
 router.get('/posts', async (req, res) => {
-  const [posts] = await db.query(`
+  const query = `
     SELECT posts.*, authors.name AS author_name FROM posts
-    INNER JOIN authors ON posts.author_id = authors.id`);
+    INNER JOIN authors ON posts.author_id = authors.id`;
+
+  const [posts] = await db.query(query);
 
   res.render('posts-list', { posts });
 });
@@ -29,6 +31,24 @@ router.post('/posts', (req, res) => {
   ]);
 
   res.redirect('/posts');
+});
+
+router.get('/posts/:id', async (req, res) => {
+  const postId = req.params.id;
+
+  const query = `
+    SELECT posts.*, authors.name AS author_name, authors.email AS author_email
+    FROM posts INNER JOIN authors ON posts.author_id = authors.id
+    WHERE posts.id = ?`;
+
+  const [posts] = await db.query(query, postId);
+
+  // @ts-ignore
+  if (!posts || posts.length === 0) {
+    return res.status(404).render('404');
+  }
+
+  res.render('post-detail', { post: posts[0] });
 });
 
 router.get('/new-post', async (req, res) => {
