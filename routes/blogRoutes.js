@@ -96,4 +96,14 @@ router.post('/posts/:id', async (req, res) => {
   res.redirect(`/posts/${postId}`);
 });
 
+router.post('/posts/:id/delete', async (req, res) => {
+  const postId = req.params.id;
+
+  const query = `DELETE FROM posts WHERE posts.id = ?`;
+
+  await db.query(query, [postId]);
+
+  res.redirect('/posts');
+});
+
 module.exports = router;
