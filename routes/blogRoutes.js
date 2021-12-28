@@ -18,6 +18,11 @@ router.get('/posts', async (req, res) => {
   res.render('posts-list', { posts });
 });
 
+router.get('/new-post', async (req, res) => {
+  const [authors] = await db.query('SELECT * FROM authors');
+  res.render('create-post', { authors: authors });
+});
+
 router.post('/posts', (req, res) => {
   const data = [
     req.body.title,
@@ -62,9 +67,19 @@ router.get('/posts/:id', async (req, res) => {
   res.render('post-detail', { post: postData });
 });
 
-router.get('/new-post', async (req, res) => {
-  const [authors] = await db.query('SELECT * FROM authors');
-  res.render('create-post', { authors: authors });
+router.get('/posts/:id/edit', async (req, res) => {
+  const postId = req.params.id;
+
+  const query = `SELECT posts.* FROM posts WHERE posts.id = ?`;
+
+  const [posts] = await db.query(query, [postId]);
+
+  // @ts-ignore
+  if (!posts || posts.length === 0) {
+    return res.status(404).render('404');
+  }
+
+  res.render('update-post', { post: posts[0] });
 });
 
 module.exports = router;
